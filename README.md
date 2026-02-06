@@ -1,5 +1,6 @@
 # Dokploy에서 OpenClaw (Moltbot) 설치 완벽 가이드
 
+> **버전**: 2026.1.29
 > **작성일**: 2026-02-03
 > **패키지**: `moltbot/moltbot:latest` (Docker Hub)
 
@@ -104,7 +105,7 @@ services:
     environment:
       HOME: /home/node
       TERM: xterm-256color
-      CLAWDBOT_GATEWAY_TOKEN: ${CLAWDBOT_GATEWAY_TOKEN}
+      CLAWDBOT_GATEWAY_TOKEN: YOUR_TOKEN_HERE
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
     volumes:
       - moltbot-config:/home/node/.moltbot
@@ -121,6 +122,8 @@ services:
       - --port
       - "18789"
       - --allow-unconfigured
+      - --token
+      - YOUR_TOKEN_HERE
     networks:
       - dokploy-network
 
@@ -132,6 +135,14 @@ networks:
   dokploy-network:
     external: true
 ```
+
+> ⚠️ **중요: Gateway Token 설정**
+>
+> `YOUR_TOKEN_HERE`를 실제 토큰 값으로 **두 곳 모두** 변경해야 합니다:
+> 1. `environment.CLAWDBOT_GATEWAY_TOKEN` - 환경변수
+> 2. `command`의 `--token` 옵션 - CLI 인자
+>
+> **환경변수만으로는 작동하지 않습니다!** 반드시 `--token` 옵션도 함께 설정해야 합니다.
 
 ### 4.2 YAML 설정 설명
 
@@ -160,6 +171,8 @@ command:
   - --port
   - "18789"
   - --allow-unconfigured
+  - --token
+  - YOUR_TOKEN_HERE
 ```
 
 **잘못된 command:**
@@ -688,9 +701,31 @@ docker logs $CONTAINER --tail 50
 
 ### 14.3 unauthorized: gateway token missing
 
-**원인**: URL에 token 파라미터 없음
+**원인 1**: URL에 token 파라미터 없음
 
 **해결**: `?token=YOUR_TOKEN`을 URL에 추가
+
+**원인 2**: 컨테이너에 token이 전달되지 않음 (재시작 루프 발생)
+
+**해결**:
+```bash
+# 로그에서 아래 메시지가 반복되면:
+# "Gateway auth is set to token, but no token is configured"
+
+# docker-compose.yml의 command에 --token 옵션을 추가해야 합니다:
+command:
+  - gateway
+  - --bind
+  - lan
+  - --port
+  - "18789"
+  - --allow-unconfigured
+  - --token
+  - YOUR_TOKEN_HERE  # 실제 토큰 값으로 변경
+```
+
+> ⚠️ 환경변수 `CLAWDBOT_GATEWAY_TOKEN`만으로는 작동하지 않습니다.
+> **반드시 `--token` CLI 옵션도 함께 설정해야 합니다.**
 
 ### 14.4 unauthorized: pairing required
 
@@ -851,6 +886,14 @@ docker exec $CONTAINER node dist/index.js devices approve <request-id>
 
 ---
 
+## 변경 이력
+
+| 날짜 | 버전 | 변경 내용 |
+|------|------|----------|
+| 2026-02-03 | 1.0 | 최초 작성 |
+| 2026-02-06 | 1.1 | Gateway Token 설정 방법 수정 - `--token` CLI 옵션 필수 추가 |
+
+---
 
 > 📝 **문서 작성**: Claude Code
 > 🔧 **테스트 환경**: Dokploy on Ubuntu 22.04, Moltbot 2026.1.29

@@ -1,0 +1,6 @@
+[submodule ".claude/skills/dokploy-skills"]
+	path = .claude/skills/dokploy-skills
+	url = https://github.com/thruthesky/dokploy-skill
+[submodule ".claude/skills/skill-creator"]
+	path = .claude/skills/skill-creator
+	url = https://github.com/thruthesky/skill-creator
