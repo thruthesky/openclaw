@@ -39,12 +39,27 @@ OpenClaw의 설치, 배포, 업데이트는 모두 **dokploy-skill**을 통해 �
 
 Claude Code에서 dokploy 관련 작업을 요청하면 자동으로 dokploy-skill이 활성화됩니다.
 
-**예시:**
+**새 OpenClaw 설치 요청 예시:**
+
+아래와 같이 Claude Code에 요청하면 자동으로 설치가 진행됩니다:
 
 ```
-# 배포
-"Dokploy에 OpenClaw를 배포해줘"
+@.claude/skills/dokploy-skills/references/openclaw.md 문서를 보고 OpenClaw 를 설치해주세요.
 
+Root SSH 접속 정보: root@167.xxx.yy.zzz
+프로젝트 주소: http://167.xxx.yy.zzz:3000/dashboard/project/프로젝트ID/environment/환경ID
+새 서비스 이름: Claw5
+도메인: claw5.vibers.kr
+API Provider: DeepSeek
+DeepSeek API Key: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Dokploy API Key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+> **필수 정보 6가지**: Root SSH 접속 정보, 프로젝트 주소(또는 ID), 서비스 이름, 도메인, API Provider, API Key를 모두 제공해야 한 번에 설치가 완료됩니다.
+
+**기타 작업 예시:**
+
+```
 # 업데이트
 "OpenClaw를 최신 버전으로 업데이트해줘"
 
